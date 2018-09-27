@@ -86,101 +86,73 @@ def step_to_chunk(map_volume,drone_position,heading,action):
 
 
     action_names = action_map[action]
-    right_turn = 0 #(left = 0, right=1)
-    diagonal_right_turn = 0 #(#diag left =0, diag_right=1))
-    turn = 0 #(center = 1)
-    up_action = 0 #(down=0,up=1)
-    altitude_change = 0
-    drop_action = 0 #(no drop = 0, drop = 1)
 
-    chunk = ['isa', 'decision','current_altitude',int(drone_position[0]),
-             'heading',int(heading),
-             'view_left',int(altitudes[0]),
-             'view_diagonal_left',int(altitudes[1]),
-             'view_center',int(altitudes[2]),
-             'view_diagonal_right',int(altitudes[3]),
-             'view_right',int(altitudes[4])]
-    if not action == 15:
-        if action_names[0] == 'diagonal_right':
-            diagonal_right_turn=1
-            turn = 1
-        elif action_names[0] == 'right':
-            right_turn=1
-            turn = 1
-        elif action_names[0] == 'left':
-            turn = 1
-        elif action_names[1] == 'diagonal_left':
-            turn = 1
 
-        if action_names[1] == 'up':
-            up_action = 1
-            altitude_change = 1
-        if action_names[1] == 'down':
-            altitude_change = 1
-
-    else:
-        drop_action = 1
+    chunk = ['isa', 'decision','current_altitude',['current_altitude',int(drone_position[0])],
+             'heading', ['heading',int(heading)],
+             'view_left',['view_left',int(altitudes[0])],
+             'view_diagonal_left',['view_diagonal_left',int(altitudes[1])],
+             'view_center',['view_center',int(altitudes[2])],
+             'view_diagonal_right',['view_diagonal_right',int(altitudes[3])],
+             'view_right',['view_right',int(altitudes[4])],
+             'action',['action',int(action)]]
 
 
 
 
-    chunk.extend(['turn',turn,'altitude_change',altitude_change,
-                  'diagonal_right_turn',diagonal_right_turn,
-                  'right_turn',right_turn,
-                  'ascending',up_action,
-                  'drop_action',drop_action])
+
     return chunk
 
 
     print("converting step")
 
 
-data_path = 'data'
-
-datafiles = os.listdir('data')
-all_chunks = []
-for file in [x for x in datafiles if '.tj' in x]:
-    path = os.path.join(data_path,file)
-    data = pickle.load(open(path,'rb'))
-    for episode in data:
-        for step in zip(data[episode]['vol'],data[episode]['drone_pos'],data[episode]['headings'],data[episode]['actions']):
-            all_chunks.append(step_to_chunk(step[0],step[1],step[2],step[3]))
-
-
-#we collect all the chunks, but don't need them all
-#we REALLY only need 1 of each possible combination (5^4?)
-#I assume we will not get every combination
-unique_chunks = []
-for x in all_chunks:
-    if not x in unique_chunks:
-        unique_chunks.append(x)
-
-#cull the chunks a bit more
-#altitude 4 seems useless information
-culled_chunks = []
-for chunk in unique_chunks:
-    if chunk[5] == 4 or \
-        chunk[7] == 4 or \
-        chunk[9] == 4 or \
-        chunk[11] == 4 or \
-        chunk[13] == 4:
-        continue
-    elif chunk[5] == 2 or \
-        chunk[7] == 2 or \
-        chunk[9] == 2 or \
-        chunk[11] == 2 or \
-        chunk[13] == 2:
-        continue
-    else:
-        culled_chunks.append(chunk)
-
-print(len(all_chunks))
-print(len(unique_chunks))
-print(len(culled_chunks))
-
-filename = 'chunks.pkl'
-file_path = os.path.join(data_path,filename)
-with open(file_path,'wb') as handle:
-    pickle.dump(culled_chunks,handle)
+# data_path = 'data'
+#
+# datafiles = os.listdir('data')
+# all_chunks = []
+# for file in [x for x in datafiles if '.tj' in x]:
+#     path = os.path.join(data_path,file)
+#     data = pickle.load(open(path,'rb'))
+#     for episode in data:
+#         for step in zip(data[episode]['vol'],data[episode]['drone_pos'],data[episode]['headings'],data[episode]['actions']):
+#             all_chunks.append(step_to_chunk(step[0],step[1],step[2],step[3]))
+#
+#
+# #we collect all the chunks, but don't need them all
+# #we REALLY only need 1 of each possible combination (5^4?)
+# #I assume we will not get every combination
+# unique_chunks = []
+# for x in all_chunks:
+#     if not x in unique_chunks:
+#         unique_chunks.append(x)
+#
+# #cull the chunks a bit more
+# #altitude 4 seems useless information
+# culled_chunks = []
+# for chunk in unique_chunks:
+#     if chunk[7][1] == 4 or \
+#         chunk[9][1] == 4 or \
+#         chunk[11][1] == 4 or \
+#         chunk[13][1] == 4 or \
+#         chunk[15][1] == 4:
+#         continue
+#     elif chunk[7][1] == 2 or \
+#         chunk[9][1] == 2 or \
+#         chunk[11][1] == 2 or \
+#         chunk[13][1] == 2 or \
+#         chunk[15][1] == 2:
+#         continue
+#     else:
+#         culled_chunks.append(chunk)
+#
+# print(len(all_chunks))
+# print(len(unique_chunks))
+# print(len(culled_chunks))
+#
+# filename = 'chunks.pkl'
+# file_path = os.path.join(data_path,filename)
+# with open(file_path,'wb') as handle:
+#     pickle.dump(culled_chunks,handle)
 
 

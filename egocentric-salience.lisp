@@ -21,11 +21,10 @@
          :seed (1 1) :bll nil :blc 5 :mp 1 :v t :blt t :esc t :ans nil :rt -5 :value->mag second)
 
   ;(chunk-type observation needsRadio needsFood needsFA needsWater actual)
-  (chunk-type observation current_altitude view_left view_diagonal_left view_center view_diagonal_right view_right)
+  (chunk-type observation current_altitude heading view_left view_diagonal_left view_center view_diagonal_right view_right)
   ;(chunk-type decision needsRadio needsFood needsFA needsWater radio food firstaid water)
-  (chunk-type decision current_altitude view_left view_diagonal_left view_center view_diagonal_right view_right
-              turn altitude_change diagonal_right_turn right_turn
-              ascending drop_action)
+  (chunk-type decision current_altitude heading view_left view_diagonal_left view_center view_diagonal_right view_right
+              action)
   
   
 
@@ -33,6 +32,7 @@
   (p p1
      =imaginal>
        current_altitude =CA
+       heading =HD
        view_left =VL
        view_diagonal_left =VDL
        view_center =VC
@@ -47,6 +47,7 @@
      +blending>
        isa decision
        current_altitude =CA
+       heading =HD
        view_left =VL
        view_diagonal_left =VDL
        view_center =VC
@@ -57,12 +58,7 @@
   (p p2
      =blending>
        isa decision
-       turn =turn
-       altitude_change =altitude_change
-       diagonal_right_turn =diagonal_right_turn
-       right_turn =right_turn
-       ascending =ascending
-       drop_action =drop_action
+       action =action
      ?blending>
        state free
      ==>
